@@ -28,8 +28,11 @@ type hashez struct {
 
 func initialization() map[string]string {
 	logz, _ := zap.NewDevelopment()
+
 	//logz, _ := zap.NewProduction()
 	sugar := logz.Sugar()
+	// Change logging to info
+	sugar = sugar.WithOptions(zap.IncreaseLevel(zap.InfoLevel))
 	logger = sugar
 
 	sugar.Info("Initializing Starting!")
@@ -40,6 +43,7 @@ func initialization() map[string]string {
 	countPtr := flag.Int("count", 3, "Number of times to run. 99 will cause a near infinite counter for longer scan times")
 	delayPtr := flag.Int("delay", 5, "Number of seconds to wait in between scans")
 	csvPtr := flag.Bool("csv", false, "Turn on CSV output")
+	silentPtr := flag.Bool("silent", false, "Make the tool silent")
 	// outputPtr := flag.String("output", "tools", "Folder to place output of results")
 
 	flag.Parse()
@@ -50,13 +54,22 @@ func initialization() map[string]string {
 	count := *countPtr
 	delay := *delayPtr
 	csv := *csvPtr
+	silent := *silentPtr
 
 	defer sugar.Sync()
 
 	output := make(map[string]string)
 
-	if *debugPtr {
-		sugar.Debug("Debug Mode Enabled")
+	if debug {
+		sugar.Info("Debug Mode Enabled")
+		sugar = sugar.WithOptions(zap.IncreaseLevel(zap.DebugLevel))
+		logger = sugar
+	}
+
+	if silent {
+		sugar.Info("Silent Mode Enabled")
+		sugar = sugar.WithOptions(zap.IncreaseLevel(zap.WarnLevel))
+		logger = sugar
 	}
 
 	output["dir"] = dir
@@ -110,7 +123,7 @@ func tree(base string, output map[string]string, hashes map[string]string, json 
 		}
 
 		if err == nil {
-			logger.Infof("%s - %s", path, hash)
+			logger.Debugf("%s - %s", path, hash)
 			hashes[path] = hash
 
 			oldPath := path
@@ -206,7 +219,7 @@ func main() {
 		// Write json to file
 		header := "File with iteration,Path to file,Sha1 Hash,Time of original hashing\n"
 		for x, y := range jsonz {
-			fmt.Println(x, y)
+			logger.Debugf(x, y)
 			header += x + "," + y.Path + "," + y.Hash + "," + y.Time + "\n"
 		}
 		err := os.WriteFile("output.csv", []byte(header), 0644)
@@ -220,4 +233,5 @@ func main() {
 			logger.Error(err)
 		}
 	}
+	logger.Info("Done!")
 }
