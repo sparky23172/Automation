@@ -5,15 +5,18 @@ from tkinter import scrolledtext
 import time
 
 
-TITLE = "KeyInsert"
+TITLE="KeyInsert"
 COUNTER = "Click Submit to start countdown"
 
-def writez(text, main, targetFrame):
+def writez(text, targetFrame):
+    
+
     print(text)
     timer = 3
     count = timer
     while count != 0:
-        targetFrame.set("Countdown: {}".format(count))            
+        if targetFrame != None:
+            targetFrame.config(text="{}".format(count))
         print("Countdown: {}".format(count))
         main.update()
         time.sleep(1)
@@ -21,7 +24,8 @@ def writez(text, main, targetFrame):
 
     auto.typewrite(text, interval=0.1)
     print(text, "has been written")
-    targetFrame.set("Text has been written!\nPlease click Submit to start again")
+    if targetFrame != None:
+        targetFrame.config(text="Text has been written")
 
 
 def main():
@@ -30,8 +34,6 @@ def main():
     if resp == "Multi Line":
         root = tk.Tk()
         root.title(TITLE)
-        testing = tk.StringVar()
-        testing.set(COUNTER)
 
         frame_a = tk.Frame()
         entry = tk.Entry(master=frame_a, width=50)
@@ -43,7 +45,7 @@ def main():
         
         ttk.Label(root, text="Hey! This is the Single lined KeyLogger Program!\n\nPlease insert the text you want to paste below\n\n",
                 font=("Times New Roman", 15)).grid(column=0, row=0)
-        ttk.Label(root, textvariable=testing, font=("Bold", 12)).grid(column=0, row=1)
+        ttk.Label(root, text=COUNTER, font=("Bold", 12)).grid(column=0, row=1)
         ttk.Label(root, text="Text to Paste:", font=("Bold", 12)).grid(column=0, row=2)
         ttk.Label(frame_a, text="Test")
         
@@ -51,7 +53,7 @@ def main():
                                             width=40, height=8,
                                             font=("Times New Roman", 15))
         
-        sub_btn=tk.Button(root,text = 'Submit', command = lambda: writez(text_area.get("1.0", "end-1c"), root, testing))
+        sub_btn=tk.Button(root,text = 'Submit', command = lambda: writez(text_area.get("1.0", "end-1c"), None))
         text_area.grid(column=0, row=2, pady=10, padx=10)
         sub_btn.grid(column=0, row=3, pady=10, padx=10)
 
@@ -62,17 +64,14 @@ def main():
     if resp == "Single Line":
         window = tk.Tk()
         window.title(TITLE)
-
-        testing = tk.StringVar()
-        testing.set(COUNTER)
-
+        
         frame_a = tk.Frame()
         frame_b = tk.Frame()
 
         entry = tk.Entry(master=frame_a, width=50)
         label_a = tk.Label(master=frame_a, text="Hey! This is the Single lined KeyLogger Program!\n\nPlease insert the text you want to paste below\n")
-        frameC = tk.Label(master=frame_a, textvariable=testing)
-        button = tk.Button(master=frame_b, text="Submit", command=lambda: writez(entry.get(), window, testing))
+        frameC = tk.Label(master=frame_a, text=COUNTER)
+        button = tk.Button(master=frame_b, text="Submit", command=lambda: writez(entry.get(), frameC))
 
         label_a.pack()
         frameC.pack()
