@@ -16,3 +16,5 @@ Table below explains requirements needed for program to run optimally
 | wafw00f         | Nothing special outside of installed                                                                                  | Just needs to be in path    |
 | wayback         | Needs to be downloaded, put in ~/tools/waybackurls/                                                                   | Download and put in ~/tools |
 | whatweb         | Nothing special outside of installed                                                                                  | Just needs to be in path    |
+
+reconGo is the compiled program for Debian if you do not want to compile it yourself.
